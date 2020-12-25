@@ -108,7 +108,7 @@ $(document).ready(function(){
 		$("#form2-password").val("");
 		$("#form2-repassword").val("");
 	});
-	
+
 	/*//4、找回密码的按钮提交事件
 	$("#changePasswordbtn").click(function(){
 		var repassword=$("#form2-repassword").val();
@@ -119,6 +119,17 @@ $(document).ready(function(){
 	
 });
 
+function transitionLogin() {
+	if ($("#check").css("display") === "none") {
+		$("#password-login").css("display", "none");
+		$("#check").css("display", "block");
+        $("#way").html("账号密码登录")
+	} else {
+		$("#check").css("display", "none");
+		$("#password-login").css("display", "block");
+		$("#way").html("手机号登陆")
+	}
+}
 /*
 * jquery代码代替了  js代码
 

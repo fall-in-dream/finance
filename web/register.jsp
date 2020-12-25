@@ -49,13 +49,10 @@
                 <h3>注册</h3>
                 <!-- 访问路径     "${pageContext.request.contextPath}/user/regist.action"  -->
                 <form
-                        action="${pageContext.request.contextPath}/user/regist.action"
+                        action="${pageContext.request.contextPath}/RegisterServlet"
                         id="myform" method="post">
-                    <!-- 输入框组 -->
-                    <!-- 用户名或者密码输入错误，请重新输入 -->
-                    <div>
-                        <label id="msgLabel">${msg }</label>
-                    </div>
+                    <input type="hidden" name="method" value="register">
+
                     <!-- 输入框组 -->
                     <div class="form-group">
                         <div class="input-group">
@@ -110,7 +107,7 @@
                                 <span class="glyphicon glyphicon-ok-sign" id="icon"></span>
                             </div>
                             <input type="check-code" class="form-control" placeholder="验证码"
-                                   name="check-code" id="验证码" required="required" value="${user.email }">
+                                   name="code" id="check-code" required="required" value="${user.email }">
                             <span class="input-group-addon btn-xs" id="get-code" style="cursor: pointer" onclick="sendMessage()">获取验证码</span>
                         </div>
                         <!-- 						<label id="passwordLabel"></label> -->
