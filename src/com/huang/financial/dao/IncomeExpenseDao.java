@@ -21,4 +21,22 @@ public interface IncomeExpenseDao {
      */
     public abstract Page<IncomeExpense> getPage(CriteriaIncomeExpense criteriaIncomeExpense);
 
+    /**
+     * 向数据库中插入IncomeExpense对象
+     * @return
+     */
+    public abstract long insertIncomeExpense(IncomeExpense incomeExpense);
+
+    /**
+     * 根据incomeExpenseId获取其对应的IncomeExpense对象
+     * @param incomeExpenseId
+     * @return
+     */
+    public abstract IncomeExpense getIncomeExpenseById(long incomeExpenseId);
+
+    /**
+     * 修改用户收支对象
+     * @param incomeExpense
+     */
+    public abstract void alterIncomeExpense(IncomeExpense incomeExpense);
 }

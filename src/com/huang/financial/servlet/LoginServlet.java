@@ -52,7 +52,7 @@ public class LoginServlet extends HttpServlet {
         if (user != null) {
             request.setAttribute("status", "1");
             request.getSession().setAttribute("user", user);
-            request.getRequestDispatcher("/FinancialManagementServlet?method=getAllIncomeExpenseByUserId").
+            request.getRequestDispatcher("FinancialManagementServlet?method=getAllIncomeExpenseByUserId").
                     forward(request, response);
         }
     }

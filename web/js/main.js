@@ -210,10 +210,10 @@ $(document).ready(function(){
 			//ajax异步请求，当前收入类型是否存在
 			 $.ajax({
 					//请求资源路径
-					url:"/financialManage/shouzhiCategory/findsonCategoryByNameAndAjax.action",
+					url:"FinancialManagementServlet",
 					async:true,
 					type:"post",
-					data:{"son_category":son},
+					data:{"son_category":son, "method":"checkIncomeExpenseSubtype"},
 					dataType:"json",//返回时的数据类型json
 					//当请求成功时运行的函数
 					success:function(data){
@@ -238,15 +238,25 @@ $(document).ready(function(){
 	 //添加收入类型按钮  add_income_category_btn
 	 $("#add_income_category_btn").click(function(){
 		 var son=$("#add_income_category_input").val();
-		 alert("son:--"+son);
-		 if(son!=null&&son!=""){
+		 if(son!=null&&son!==""){
 			 //提交表单数据
-			 $.post("/financialManage/shouzhiCategory/addShouzhiCategory.action", $("#add_income_category_form")
+			 /*$.post("FinancialManagementServlet?method=addIncomeExpenseSubtype", $("#add_income_category_form")
 						.serialize(), function(data) { //序列化数据为对象
 					//回调为ok时，弹出alert框，并重新刷新页面
 					alert("添加收入类型成功！");
 					window.location.reload();
-				});
+				});*/
+			 $.ajax({
+				 url: "FinancialManagementServlet?method=addIncomeExpenseSubtype",
+				 type: "POST",
+				 contentType : "application/x-www-form-urlencoded;charset=UTF-8",
+				 data:{"son_category":son, "method":"addIncomeExpenseSubtype", "parent_category":"收入"},
+				 dataType: "json",
+				 success: function (data) {
+					 alert("添加支出类型成功！");
+					 $(location).attr('href', 'FinancialManagementServlet?method=getAllIncomeExpenseByUserId')
+				 }
+			 })
 		 }
 		 else{
 			 //对于提示信息的判断处理
@@ -366,10 +376,10 @@ $(document).ready(function(){
 			//ajax异步请求，当前支出类型是否存在
 			 $.ajax({
 					//请求资源路径
-					url:"/financialManage/shouzhiCategory/findsonCategoryByNameAndAjax.action",
-					async:true,
-					type:"post",
-					data:{"son_category":son},
+				    url:"FinancialManagementServlet",
+				    async:true,
+				    type:"post",
+				    data:{"son_category":son, "method":"checkIncomeExpenseSubtype"},
 					dataType:"json",//返回时的数据类型json
 					//当请求成功时运行的函数
 					success:function(data){
@@ -394,14 +404,27 @@ $(document).ready(function(){
 	 //添加支出类型按钮  add_spend_category_btn
 	 $("#add_spend_category_btn").click(function(){
 		 var son=$("#add_spend_category_input").val();//输入的内容
-		 if(son!=null&&son!=""){
+		 var data = $("#add_spend_category_btn").serialize();
+		 if(son!=null&&son!==""){
 			 //提交表单数据
-			 $.post("/financialManage/shouzhiCategory/addShouzhiCategory.action", $("#add_spend_category_form")
+			 /*$.post("FinancialManagementServlet?method=addIncomeExpenseSubtype", $("#add_spend_category_form")
 						.serialize(), function(data) { //序列化数据为对象
 					//回调为ok时，弹出alert框，并重新刷新页面
 					alert("添加支出类型成功！");
 					window.location.reload();
-				});
+				});*/
+			 $.ajax({
+				 url: "FinancialManagementServlet?method=addIncomeExpenseSubtype",
+				 type: "POST",
+				 contentType : "application/x-www-form-urlencoded;charset=UTF-8",
+				 data:{"son_category":son, "method":"addIncomeExpenseSubtype", "parent_category":"支出"},
+				 dataType: "json",
+				 success: function (data) {
+					 alert("添加支出类型成功！");
+					 window.location = "FinancialManagementServlet";
+					 $(location).attr('href', 'FinancialManagementServlet?method=getAllIncomeExpenseByUserId')
+				 }
+			 })
 		 }
 		 else{
 			 //对于提示信息的判断处理

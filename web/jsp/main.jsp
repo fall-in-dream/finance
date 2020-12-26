@@ -106,7 +106,7 @@
             //返回ShouzhiRecord对象 +
             $.ajax({
                     type : "get",
-                    url : "/financialManage/shouzhiRecord/toEdit.action",
+                    url : "FinancialManagementServlet?method=getIncomeExpenseById",
                     data : {
                         "id" : id
                     },
@@ -122,22 +122,22 @@
 
                         //select标签   my_szr_category
                         //循环遍历
-                        $.each(data.son,function() {
-                            var optionEle = $("<option></option>").append(this).attr("value",this);
+                        $.each(data.incomeExpenseSubtypes,function() {
+                            var optionEle = $("<option></option>").append(this.iest_name).attr("value",this.iest_id);
                             //添加选中的情况
-                            if (data.shouzhiRecord.shouzhiCategory.son_category == this) {
+                            if (data.incomeExpense.iest_id === this.iest_id) {
                                 optionEle.attr("selected",
                                     "selected");//添加属性
                             }
                             optionEle.appendTo("#my_szr_category");//添加option到select标签中
                         });
 
-                        $("#my_szrid2").val(data.shouzhiRecord.szrid);
+                        $("#my_szrid2").val(data.incomeExpense.ie_id);
                         //回显示在模态框中
-                        $("#my_szrid").val(data.shouzhiRecord.szrid);
+                        $("#my_szrid").val(data.incomeExpense.ie_id);
                         $("#my_szr_comment")
-                            .val(data.shouzhiRecord.szr_comment);
-                        $("#my_szr_num").val(data.shouzhiRecord.szr_num);
+                            .val(data.incomeExpense.ie_remark);
+                        $("#my_szr_num").val(data.incomeExpense.ie_money);
 
                         //回显格式化之后的对象   String类型
                         //alert(data.formatDate);
@@ -146,10 +146,10 @@
 // 								data.shouzhiRecord.szr_date);
 
                         $("#my_szr_date").val(
-                            data.shouzhiRecord.szr_date);
+                            data.incomeExpense.ie_date);
 
-                        $("#my_szr_category").val(
-                            data.son.shouzhiCategory.son_category);
+                        /*$("#my_szr_category").val(
+                            data.son.shouzhiCategory.son_category);*/
 
                         /* for(var i=0;i<data.son.length;i++){
                             //alert(i);
@@ -173,18 +173,18 @@
         //$.post(URL,data,callback);
         //失败
         function updateShouzhiRecord() {
-            $.post("/financialManage/shouzhiRecord/edit.action", $("#updateform")
+            $.post("FinancialManagementServlet?method=alterIncomeExpenseRecord", $("#updateform")
                 .serialize(), function(data) { //序列化数据为对象
                 //回调为ok时，弹出alert框，并重新刷新页面
                 alert("更新收支记录成功！");
-                window.location.reload();
+                $(location).attr('href', 'FinancialManagementServlet?method=getAllIncomeExpenseByUserId')
             });
         }
 
         //删除收支记录信息
         function deleteshouzhiRecord(id) {
             if (confirm('确认要删除该收支记录吗?')) {
-                $.post("/financialManage/shouzhiRecord/deleteOne.action", {
+                $.post("FinancialManagementServlet/method=", {
                     "id" : id
                 }, function(data) {
                     //回调为ok时，弹出alert框，并重新刷新页面
@@ -197,15 +197,23 @@
 </head>
 
 <body>
+
 <c:if test="${requestScope.status == 1}">
-<script type="text/javascript">
-    $(document).ready(function () {
-        alert("登录成功");
-    })
-</script>
+    <script type="text/javascript">
+            alert("登录成功");
+    </script>
+</c:if>
+<c:if test="${requestScope.isKeepAccount == 1}">
+
+    <script type="text/javascript">
+        alert("记账成功");
+    </script>
 </c:if>
 
-
+<%
+    request.removeAttribute("status");
+    request.removeAttribute("isKeepAccount");
+%>
 <div class="overlay"></div>
 <nav class="navbar navbar-default navbar-static-top">
     <div class="container">
@@ -223,26 +231,26 @@
             <!-- 导航元素 -->
             <ul class="nav navbar-nav">
                 <li class="active"><a
-                        href="${pageContext.request.contextPath}/shouzhiRecord/findShouzhiRecord.action">财务管理</a></li>
+                        href="#">财务管理</a></li>
                 <li><a
-                        href="${pageContext.request.contextPath}/toFinancialCount.action">财务统计</a></li>
+                        href="#">财务统计</a></li>
                 <li><a
-                        href="${pageContext.request.contextPath}/financialAnalysis/toFinancialAnalysis.action">财务分析</a></li>
+                        href="#">财务分析</a></li>
                 <li><a
-                        href="${pageContext.request.contextPath}/budget/findBudget.action">财务预算</a></li>
+                        href="#">财务预算</a></li>
                 <li><a
-                        href="${pageContext.request.contextPath}/wishlist/findAllWishList.action">心愿单</a></li>
+                        href="#">心愿单</a></li>
                 <li><a
-                        href="${pageContext.request.contextPath}/memorandum/listMemorandum.action">备忘录</a></li>
+                        href="#">备忘录</a></li>
                 <li><a href="#" data-toggle="modal"
                        data-target="#countMachine" class="hidden-xs">计算器</a></li>
                 <li><a
-                        href="${pageContext.request.contextPath}/news/findNewsList.action?currentPage=0">财务新闻</a></li>
+                        href="#">财务新闻</a></li>
             </ul>
 
             <!-- 导航元素 -->
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="javascript:void(0)">欢迎：${sessionScope.user.username}</a></li>
+                <li><a href="javascript:void(0)">欢迎：${sessionScope.user.u_name}</a></li>
 
                 <li class="dropdown" id="user_setting">
                     <button type="button" class="btn dropdown-toggle"
@@ -261,7 +269,7 @@
                                                    href="${pageContext.request.contextPath}/user/logout.action">
                             <span class="glyphicon glyphicon-log-out"></span>退出登录
                         </a> <input type="hidden" id="uid" name="uid"
-                                    value="${sessionScope.user.uid }"></li>
+                                    value="${sessionScope.user.u_id }"></li>
                     </ul>
                 </li>
                 <!-- 用户设置范围 -->
@@ -297,20 +305,21 @@
                                 <div class="panel panel-default">
                                     <div class="panel-body">
                                         <form class="form-inline" id="selectByCondition"
-                                              action="${pageContext.request.contextPath}/shouzhiRecord/findShouzhiRecord.action"
+                                              action="${pageContext.request.contextPath}/FinancialManagementServlet"
                                               method="get">
+                                            <input type="hidden" name="method" value="getAllIncomeExpenseByUserId">
                                             <div class="col-md-11 col-md-offset-1 col-xs-11 col-xs-offset-1 " id="shouzhi_top">
 													<span>
 														<label for="attYearMonth" style="font-size:20px;" class="hidden-xs">收支年月</label>
 														 <input type="text"  id="attYearMonth"
-                                                                name="szr_date" value="${date_condition}"  placeholder="请输入收支年月"
+                                                                name="date"  placeholder="请输入收支年月"
                                                                 readonly="readonly">
 													</span>
                                                 <span>
 														<label for="beizhu" style="font-size:20px;" class="hidden-xs">收支备注</label>
-														<input type="text" name="szr_comment" id="beizhu" class="form-control hidden-xs"
-                                                               placeholder="请输入收支备注名" value="${comment_condition}">
-													</span>
+														<input type="text" name="remark" id="beizhu" class="form-control hidden-xs"
+                                                               placeholder="请输入收支备注名" >
+                                                </span>
                                                 <!-- 											<div class="form-group ">col-md-4 col-xs-4 -->
                                                 <label><input type="submit" id="shouzhiSubmit" class="btn btn-primary" value="查询" ></label>
                                                 <!-- 											</div> -->
@@ -323,10 +332,10 @@
                             <!-- year_month -->
 
                             <h3>收支数据明细</h3>
-                            <c:if test="${ requestScope.IncomeExpensePage.list==null}">
+                            <c:if test="${ requestScope.IncomeExpensePage.list.size() == 0}">
                                 <h1 style="color:red;">当前收支数据为空</h1>
                             </c:if>
-                            <c:if test="${ requestScope.IncomeExpensePage.list!=null}">
+                            <c:if test="${ requestScope.IncomeExpensePage.list.size() != 0}">
                                 <!-- mytable用来控制宽高 -->
                                 <div class="mytable">
                                     <form action="" method="post">
@@ -354,11 +363,11 @@
                                                     <td>${IncomeExpenseRecord.ie_remark}</td>
                                                     <td>${IncomeExpenseRecord.ie_money}</td>
                                                     <td>${IncomeExpenseRecord.ie_date}</td>
-                                                    <td>${shouzhiRecord.shouzhiCategory.son_category}</td>
+                                                    <td>${IncomeExpenseRecord.incomeExpenseSubtype.iest_name}</td>
 
                                                     <td><a href="#" data-toggle="modal" id="toeditPage"
                                                            class="btn btn-info btn-xs" data-target="#myeditModal"
-                                                           onclick="toeditPage(${shouzhiRecord.szrid });"> 修改 <span
+                                                           onclick="toeditPage(${IncomeExpenseRecord.ie_id});"> 修改 <span
                                                             class="glyphicon glyphicon-edit" id="myedit"></span>
                                                     </a> <!-- 修改 -->
 
@@ -367,10 +376,10 @@
 
                                                         <!-- 删除--> <a
                                                                 class="btn btn-danger btn-xs" href="javascript:void(0)"
-                                                                id="toDelete" onclick="deleteshouzhiRecord(${shouzhiRecord.szrid });">
+                                                                id="toDelete" onclick="deleteshouzhiRecord(${IncomeExpenseRecord.ie_id});">
                                                             删除<span class="glyphicon glyphicon-trash"></span> <input
                                                                 type="hidden" id="update_delete_id"
-                                                                value="${shouzhiRecord.szrid }">
+                                                                value="${IncomeExpenseRecord.ie_id }">
                                                         </a></td>
 
 
@@ -384,30 +393,32 @@
 
 
                                     <!-- 分页功能的制作 -->
-                                    <!--分页数据${ pageBean} -->
+                                    <!--分页数据${requestScope.IncomeExpensePage} -->
                                     <div align="center">
                                         <ul class="pagger pagination pagination-lg">
-                                            <li><a
-                                                    href="${pageContext.request.contextPath}/shouzhiRecord/findShouzhiRecord.action?currentPage=0&szr_date=${date_condition}&szr_comment=${comment_condition}"
-                                                    id="pageThing">首页</a></li>
-                                            <li><c:if test="${pageBean.currentPage-1>=0}">
-                                                <a
-                                                        href="${pageContext.request.contextPath}/shouzhiRecord/findShouzhiRecord.action?currentPage=${pageBean.currentPage-1}&szr_date=${date_condition}&szr_comment=${comment_condition} "
-                                                        id="pageThing">上一页</a>
-                                            </c:if> <c:if test="${pageBean.currentPage-1<0}">
-                                                <a href="javascript:void(0)" id="pageThing">上一页</a>
-                                            </c:if></li>
-                                            <li><c:if
-                                                    test="${pageBean.currentPage+1<pageBean.allPage}">
-                                                <a
-                                                        href="${pageContext.request.contextPath}/shouzhiRecord/findShouzhiRecord.action?currentPage=${pageBean.currentPage+1}&szr_date=${date_condition}&szr_comment=${comment_condition}"
-                                                        id="pageThing">下一页</a>
-                                            </c:if> <c:if test="${pageBean.currentPage+1>=pageBean.allPage}">
-                                                <a href="javascript:void(0)" id="pageThing">下一页</a>
-                                            </c:if></li>
-                                            <li><a
-                                                    href="${pageContext.request.contextPath}/shouzhiRecord/findShouzhiRecord.action?currentPage=${pageBean.allPage-1}&szr_date=${date_condition}&szr_comment=${comment_condition}"
-                                                    id="pageThing">尾页</a></li>
+
+                                            <c:if test="${requestScope.IncomeExpensePage.hasPrev}">
+                                                <li>
+                                                    <a
+                                                        href="${pageContext.request.contextPath}/FinancialManagementServlet?method=getAllIncomeExpenseByUserId&pageNo=1"
+                                                        id="pageThing">首页</a></li>
+                                                <li>
+                                                    <a
+                                                            href="${pageContext.request.contextPath}/FinancialManagementServlet?method=getAllIncomeExpenseByUserId&pageNo=${requestScope.IncomeExpensePage.prevPage}"
+                                                            id="pageThing">上一页</a>
+                                                </li>
+
+                                            </c:if>
+                                            <c:if test="${requestScope.IncomeExpensePage.hasNext}">
+                                                <li>
+                                                    <a href="${pageContext.request.contextPath}/FinancialManagementServlet?method=getAllIncomeExpenseByUserId&pageNo=${requestScope.IncomeExpensePage.nextPage}"
+                                                       id="pageThing">下一页</a>
+                                                </li>
+                                                <li><a
+                                                        href="${pageContext.request.contextPath}/FinancialManagementServlet?method=getAllIncomeExpenseByUserId&pageNo=${requestScope.IncomeExpensePage.totalPageNumber}"
+                                                        id="pageThing">尾页</a></li>
+                                            </c:if>
+
                                         </ul>
                                     </div>
                                     <!-- 分页所在 -->
@@ -420,7 +431,7 @@
                             <div class="modal fade" id="myeditModal" tabindex="-1"
                                  role="dialog" aria-labelledby="myModalLabel3" aria-hidden="true">
                                 <div class="modal-dialog">
-                                    <!-- 								action="${pageContext.request.contextPath}/shouzhiRecord/edit.action" method="post" -->
+                                    <!-- action="${pageContext.request.contextPath}/shouzhiRecord/edit.action" method="post" -->
                                     <form id="updateform">
                                         <div class="modal-content">
                                             <div class="modal-header">
@@ -434,23 +445,23 @@
                                                 <!-- 错误提示标签 -->
                                                 <label id="forgetmsg"></label>
                                                 <!--这里添加一些文本【主体】  -->
-                                                <input type="hidden" name="szrid" id="my_szrid2">
+                                                <input type="hidden" name="szr_id" id="my_szrid2">
                                                 <div class="form-group">
                                                     <label for="my_szrid">收支编号</label> <input type="text"
-                                                                                              id="my_szrid" class="form-control" disabled="disabled">
+                                                                                              id="my_szrid" class="form-control" name="szr_id" disabled="disabled">
                                                 </div>
                                                 <div class="form-group">
-                                                    <label for="szr_comment">收支备注</label> <input type="text"
-                                                                                                 name="szr_comment" id="my_szr_comment" class="form-control"
+                                                    <label for="my_szr_comment">收支备注</label> <input type="text"
+                                                                                                 name="szr_remark" id="my_szr_comment" class="form-control"
                                                                                                  required="required" placeholder="请输入收支备注">
                                                 </div>
                                                 <div class="form-group">
-                                                    <label for="szr_num">收支金额</label> <input type="text"
-                                                                                             name="szr_num" id="my_szr_num" class="form-control"
+                                                    <label for="my_szr_num">收支金额</label> <input type="text"
+                                                                                             name="szr_money" id="my_szr_num" class="form-control"
                                                                                              required="required" placeholder="请输入收支金额">
                                                 </div>
                                                 <div class="form-group">
-                                                    <label for="szr_date">收支日期</label>
+                                                    <label for="my_szr_date">收支日期</label>
 
                                                     <input type="text" name="szr_date"
                                                            id="my_szr_date" class="form-control"
@@ -468,16 +479,10 @@
                                                     </div>
 
                                                     <div class="form-group">
-                                                        <label for="szr_category">收支类型</label> <select
+                                                        <label for="my_szr_category">收支类型</label> <select
                                                             class="form-control" id="my_szr_category"
-                                                            name="shouzhiCategory.son_category">
+                                                            name="szr_type">
                                                     </select>
-                                                        <!-- 														<option value="" id="optionFirst">--请选择--</option> -->
-                                                        <!-- 													<c:forEach items="${sessionScope.sonCategory}" var="son"> -->
-                                                        <!-- 														<option value="${son.son_category}" -->
-                                                        <!-- 														<%-- 	<c:if test="${sessionScope.currentCategory==son.son_category}"> selected</c:if> --%>> -->
-                                                        <!-- 															${son.son_category}</option> -->
-                                                        <!-- 													</c:forEach> -->
                                                     </div>
 
                                                 </div>
@@ -513,16 +518,16 @@
                                     <h1>收入记账</h1>
                                     <hr />
                                     <form id="add_income_form"
-                                          action="${pageContext.request.contextPath}/shouzhiRecord/addShouzhiRecord.action"
+                                          action="${pageContext.request.contextPath}/FinancialManagementServlet"
                                           method="post">
-
+                                        <input name="method" type="hidden" value="addIncomeExpense">
                                         <div>
                                             <label id="msgLabel" style="color:red;">${msg }</label>
                                         </div>
                                         <div class="form-group">
                                             <div class="input-group">
                                                 <span class="input-group-addon"> 收入备注*</span> <input
-                                                    type="text" name="szr_comment" id="add_income_szr_comment"
+                                                    type="text" name="szr_remark" id="add_income_szr_comment"
                                                     class="form-control" placeholder="请输入收入备注">
                                                 <!-- 												<span>&nbsp;<label -->
                                                 <!-- 												class="add_income_msg" id="add_income_comment_msg" -->
@@ -532,7 +537,7 @@
                                         <div class="form-group">
                                             <div class="input-group">
                                                 <span class="input-group-addon"> 收入金额*</span> <input
-                                                    type="text" name="szr_num" id="add_income_szr_num"
+                                                    type="text" name="szr_money" id="add_income_szr_num"
                                                     class="form-control"
                                                     placeholder="请输入收入金额(必须是数字)"> <span><!-- &nbsp; -->
                                                 <!-- 												<label -->
@@ -567,13 +572,13 @@
                                                     <div class="input-group">
                                                         <span class="input-group-addon"> 收入类型*</span> <select
                                                             class="form-control" id="add_income_category"
-                                                            name="shouzhiCategory.szcid"  >
-                                                        <c:forEach items="${incomes}" var="income">
-                                                            <option value="${income.szcid}">${income.son_category}</option>
+                                                            name="lest_id"  >
+                                                        <c:forEach items="${requestScope.incomes}" var="income">
+                                                            <option value="${income.iest_id}">${income.iest_name}</option>
                                                         </c:forEach>
                                                     </select>
                                                         <input type="hidden" name="user_id"
-                                                               value="${sessionScope.user.uid}">
+                                                               value="${sessionScope.user.u_id}">
                                                     </div>
                                                 </div>
                                             </div>
@@ -644,9 +649,10 @@
                                     <h1>支出记账</h1>
                                     <hr />
                                     <form id="add_spend_form"
-                                          action="${pageContext.request.contextPath}/shouzhiRecord/addShouzhiRecord.action"
+                                          action="${pageContext.request.contextPath}/FinancialManagementServlet"
                                           method="post">
-
+                                        <input type="hidden" name="method" value="addIncomeExpense">
+                                        <input type="hidden" name="isExpense" value="1">
                                         <div>
                                             <label id="msgSpendLabel" style="color:red;">${msg }</label>
                                         </div>
@@ -654,7 +660,7 @@
                                         <div class="form-group">
                                             <div class="input-group">
                                                 <span class="input-group-addon"> 支出备注*</span> <input
-                                                    type="text" name="szr_comment" id="add_spend_szr_comment"
+                                                    type="text" name="szr_remark" id="add_spend_szr_comment"
                                                     class="form-control"
                                                     placeholder="请输入支出备注"> </span>
                                             </div>
@@ -662,7 +668,7 @@
                                         <div class="form-group">
                                             <div class="input-group">
                                                 <span class="input-group-addon"> 支出金额*</span> <input
-                                                    type="text" name="szr_num" id="add_spend_szr_num"
+                                                    type="text" name="szr_money" id="add_spend_szr_num"
                                                     class="form-control"
                                                     placeholder="请输入支出金额(必须是数字)"></span>
                                             </div>
@@ -672,7 +678,7 @@
                                                 <span class="input-group-addon"> 支出日期*</span>
 
                                                 <input type="text" name="szr_date" id="add_spend_szr_date"
-                                                       class="form-control" editable="false"
+                                                       class="form-control" editable="false" readonly="readonly"
                                                        placeholder="请输入支出日期">
                                             </div>
 
@@ -683,9 +689,9 @@
                                                     <div class="input-group">
                                                         <span class="input-group-addon"> 支出类型*</span> <select
                                                             class="form-control" id="add_spend_category"
-                                                            name="shouzhiCategory.szcid">
-                                                        <c:forEach items="${spends}" var="spend">
-                                                            <option value="${spend.szcid}">${spend.son_category}</option>
+                                                            name="lest_id">
+                                                        <c:forEach items="${requestScope.expenses}" var="expense">
+                                                            <option value="${expense.iest_id}">${expense.iest_name}</option>
                                                         </c:forEach>
                                                     </select>
                                                     </div>
@@ -697,7 +703,7 @@
                                                     <span class="glyphicon glyphicon-plus"></span>&nbsp;添加支出类型
                                                 </a>
                                                 <input type="hidden" name="user_id"
-                                                       value="${sessionScope.user.uid}">
+                                                       value="${sessionScope.user.u_id}">
                                             </div>
 
                                         </div>
@@ -773,7 +779,7 @@
                             <a href="${pageContext.request.contextPath}/news/findNewsList.action?currentPage=0" class="text-muted pull-right">more<span class="glyphicon glyphicon-chevron-right"></span></a>
                         </div>
                         <ul class="list-group">
-                            <c:forEach items="${newsList}" var="news">
+                            <%--<c:forEach items="${newsList}" var="news">
                                 <li class="list-group-item">
                                     <div>
                                         <a href="${pageContext.request.contextPath}/news/news.action?nid=${news.nid}"  target="_blank" class="text-muted" style="font-family: '黑体';margin-top: 2px;">
@@ -791,7 +797,7 @@
 							               	 </span>
                                     </div>
                                 </li>
-                            </c:forEach>
+                            </c:forEach>--%>
                         </ul>
                     </div>
 

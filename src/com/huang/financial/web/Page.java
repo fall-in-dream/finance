@@ -56,6 +56,9 @@ public class Page<T> {
 		if(totalItemNumber % pageSize != 0){
 			totalPageNumber++;
 		}
+		if (totalPageNumber == 0) {
+			totalPageNumber = 1;
+		}
 		
 		return totalPageNumber;
 	}

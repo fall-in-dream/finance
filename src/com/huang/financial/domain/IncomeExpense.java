@@ -7,8 +7,8 @@ public class IncomeExpense {
     private String ie_date;
     private int ie_money;
     private String ie_remark;
-    private int u_id;
-    private int iest_id;
+    private long u_id;
+    private long iest_id;
     private IncomeExpenseSubtype incomeExpenseSubtype;
 
     public long getIe_id() {
@@ -43,19 +43,19 @@ public class IncomeExpense {
         this.ie_remark = ie_remark;
     }
 
-    public int getU_id() {
+    public long getU_id() {
         return u_id;
     }
 
-    public void setU_id(int u_id) {
+    public void setU_id(long u_id) {
         this.u_id = u_id;
     }
 
-    public int getIest_id() {
+    public long getIest_id() {
         return iest_id;
     }
 
-    public void setIest_id(int iest_id) {
+    public void setIest_id(long iest_id) {
         this.iest_id = iest_id;
     }
 
