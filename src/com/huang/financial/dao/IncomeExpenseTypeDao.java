@@ -8,4 +8,11 @@ public interface IncomeExpenseTypeDao {
      * @return
      */
     public abstract long getIncomeExpenseTypeIdByName(String incomeExpenseTypeName);
+
+    /**
+     * 根据收入支出id获取收入支出类型名
+     * @param incomeExpenseSubtypeId
+     * @return
+     */
+    public abstract String getIncomeExpenseTypeNameById(long incomeExpenseSubtypeId);
 }

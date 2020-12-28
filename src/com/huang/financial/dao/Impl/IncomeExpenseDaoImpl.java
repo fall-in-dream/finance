@@ -46,6 +46,12 @@ public class IncomeExpenseDaoImpl extends BaseDAO<IncomeExpense> implements Inco
                 incomeExpense.getIest_id(), incomeExpense.getIe_id());
     }
 
+    @Override
+    public void deleteIncomeExpenseById(long id) {
+        String sql = "delete from ie where ie_id = ?";
+        update(sql, id);
+    }
+
     private List<IncomeExpense> getPageList(CriteriaIncomeExpense criteriaIncomeExpense, int pageSize) {
         String sql = "select ie_id,ie_date,ie_money,ie_remark,u_id,iest_id from ie where " +
                 "ie_date like ? and ie_remark like ? and u_id = ? limit ?,?";

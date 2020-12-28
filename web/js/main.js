@@ -33,11 +33,9 @@ $(document).ready(function(){
 			$("#msgLabel").text("用户名不能为空");
 		}
 		else{//用户名不为空时，进行上述的判定 --通过ajax进行实现
-			
 			$.ajax({
 				//请求资源路径
-				url:"/financialManage/user/findUserByNameAndAjax.action",
-				async:true,
+				url:"RegisterServlet?method=checkUsername",
 				//规定请求的类型（GET 或 POST）
 				type:"post",
 				//规定要发送到服务器的数据（json格式）
@@ -50,7 +48,7 @@ $(document).ready(function(){
 					//alert(data.name);
 					//返回的data是 exit 或者 notexit
 					
-					if(data.name=="exit"){//用户已存在
+					if(data.status=="exit"){//用户已存在
 						$("#msgLabel").text("该用户已存在，请重新输入");
 						$("#username").val("");//清空值
 //						$("#username").focus();
@@ -187,14 +185,14 @@ $(document).ready(function(){
          });    
 //		alert(str);
 		if(confirm('确认要批量删除该这些收支记录吗?')){
-			$.post("/financialManage/shouzhiRecord/deleteBatch.action", {"id":str}, function(data) { 
-			//回调为ok时，弹出alert框，并重新刷新页面
-			alert("删除收支记录成功！");
-			window.location.reload();
-		});
+				$.post("FinancialManagementServlet?method=batchDeleteIncomeExpense", {"id":str}, function(data) {
+				//回调为ok时，弹出alert框，并重新刷新页面
+				alert("删除收支记录成功！");
+				$(location).attr('href', 'FinancialManagementServlet?method=getAllIncomeExpenseByUserId')
+			});
 		}
 	 });
-	 
+
 //------------------------------------------------------------------------------------------	 
 //添加收入类型模态框事件
 	 

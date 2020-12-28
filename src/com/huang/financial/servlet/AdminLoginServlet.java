@@ -1,9 +1,7 @@
 package com.huang.financial.servlet;
 
-import com.huang.financial.dao.Impl.UserDaoImpl;
-import com.huang.financial.dao.UserDao;
-import com.huang.financial.domain.User;
-import com.huang.financial.service.LoginService;
+import com.huang.financial.domain.Admin;
+import com.huang.financial.service.AdminLoginService;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -14,10 +12,10 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.Method;
 
-@WebServlet(name = "/LoginServlet", urlPatterns = "/LoginServlet")
-public class LoginServlet extends HttpServlet {
+@WebServlet(name = "/AdminLoginServlet", urlPatterns = "/AdminLoginServlet")
+public class AdminLoginServlet extends HttpServlet {
 
-    LoginService loginService = new LoginService();
+    AdminLoginService adminLoginService = new AdminLoginService();
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String methodName = request.getParameter("method");
@@ -37,24 +35,18 @@ public class LoginServlet extends HttpServlet {
         doPost(request, response);
     }
 
-    //跳转页面
-    protected void forwardPage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String page = request.getParameter("page");
-        request.getRequestDispatcher(page + ".jsp").forward(request, response);
-    }
-
     protected void login(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String username = request.getParameter("username");
+        String adminName = request.getParameter("adminname");
         String password = request.getParameter("password");
-        User user = new User();
-        user.setU_account(username);
-        user.setU_password(password);
-        user = loginService.checkUser(user);
-        if (user != null) {
+
+        Admin admin = new Admin();
+        admin.setA_account(adminName);
+        admin.setA_password(password);
+
+        if (adminLoginService.checkAdmin(admin) != null) {
             request.setAttribute("status", "1");
-            request.getSession().setAttribute("user", user);
-            request.getRequestDispatcher("FinancialManagementServlet?method=getAllIncomeExpenseByUserId").
-                    forward(request, response);
+            request.getSession().setAttribute("admin", admin);
+            request.getRequestDispatcher("UserManageServlet?method=getAllUser").forward(request, response);
         } else {
             response.setContentType("text/html; charset=UTF-8"); //转码
             PrintWriter out = response.getWriter();
@@ -65,4 +57,6 @@ public class LoginServlet extends HttpServlet {
             out.println("</script>");
         }
     }
+
+
 }

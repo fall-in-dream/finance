@@ -43,23 +43,23 @@
         }
 
         //去用户修改信息页面
-        function toUserEditPage(uid){//异步交互事件
+        function toUserEditPage(id){//异步交互事件
 // 		alert(uid);
             $.ajax({
                 type : "get",
-                url : "/financialManage/userManage/toEditPage.action",
-                data : {"uid":uid},
+                url : "UserManageServlet?method=getUserById",
+                data : {"id":id},
 // 				data:JSON.stringify({"uid":uid}),
                 contentType:"application/json;charset=utf-8",/* 发送数据给服务器时所用的内容类型	*/
                 dataType : "json",//返回时的数据类型json
                 success : function(data) {
 // 					alert("成功");
-                    $("#update_uid").val(data.user.uid);
-                    $("#update_username").val(data.user.username);
-                    $("#update_password").val(data.user.password);
-                    $("#update_email").val(data.user.email);
-                    $("#update_phone").val(data.user.phone);
-                    var sex=data.user.sex;
+                    $("#update_uid").val(data.user.u_id);
+                    $("#update_username").val(data.user.u_account);
+                    $("#update_password").val(data.user.u_password);
+                    $("#update_email").val(data.user.u_email);
+                    $("#update_phone").val(data.user.u_tel);
+                    var sex=data.user.u_sex;
                     if(sex!=null&&sex!=""){
                         if(sex=='男'){
                             $("#nan_radio").attr("checked","checked");
@@ -71,7 +71,7 @@
                     else{
                         $("#nan_radio").attr("checked","checked");
                     }
-                    $("#old_username").val(data.old_username);//保存原来的用户名
+                    $("#old_username").val(data.user.u_account);//保存原来的用户名
 
                 },
                 /* 	 error:function(jqXHR,textStatus,errorThrown){
@@ -120,6 +120,11 @@
 </head>
 
 <body>
+<c:if test="${requestScope.status == 1}">
+    <script type="text/javascript">
+        alert("登录成功");
+    </script>
+</c:if>
 <div class="container">
     <div class="row">
         <!--顶部导航栏部分-->
@@ -131,7 +136,7 @@
                     </div>
                     <div>
                         <ul class="nav navbar-nav navbar-right">
-                            <li><a href="javascript:void(0)">欢迎: <span class="glyphicon glyphicon-user"></span> ${sessionScope.admin.adminname }</a></li>
+                            <li><a href="javascript:void(0)">欢迎: <span class="glyphicon glyphicon-user"></span> ${sessionScope.admin.a_account }</a></li>
                             <li><a href="${pageContext.request.contextPath}/userManage/logout.action"><span class="glyphicon glyphicon-log-out"></span> 退出登录</a></li>
                         </ul>
                     </div>
@@ -186,27 +191,27 @@
                     <div class="panel panel-default">
                         <div class="panel-body">
                             <form class="form-inline" id="selectByCondition" name="selectByCondition"
-                                  action="${pageContext.request.contextPath}/userManage/findUsers.action"
+                                  action="${pageContext.request.contextPath}/UserManageServlet"
                                   method="post">
+                                <input type="hidden" name="method" value="getAllUser">
                                 <div>
                                     <div class="form-group ">
                                         <label for="username">用户名</label> <input type="text"
                                                                                  class="form-control" name="username" id="username"
-                                                                                 placeholder="请输入用户名" value="${findUser.username}">
+                                                                                 placeholder="请输入用户名" value="${findUser.u_account}">
                                     </div>
                                     <div class="form-group ">
                                         <label for="email">邮箱</label> <input type="text"
                                                                              class="form-control" name="email" id="email"
-                                                                             placeholder="请输入邮箱" value="${findUser.email}">
+                                                                             placeholder="请输入邮箱" value="${findUser.u_email}">
                                     </div>
                                     <div class="form-group ">
                                         <label for="phone">手机号</label> <input type="text"
                                                                               class="form-control" name="phone" id="phone"
-                                                                              placeholder="请输入手机号" value="${findUser.phone}">
+                                                                              placeholder="请输入手机号" value="${findUser.u_tel}">
                                     </div>
                                     <!--  默认情况下，当前页是第0页 -->
-                                    <input type="hidden" id="currentPage" name="currentPage" value="0"/>
-                                    <!-- 												<input type="hidden" id="currentPage3" name="currentPage3"/> -->
+
                                     <div class="form-group "><!-- col-md-4 col-xs-4 -->
                                         <input type="submit" class="btn btn-primary btn-block" value="查询" >
                                     </div>
@@ -216,10 +221,10 @@
                     </div>
                 </div><!-- main -->
 
-                <c:if test="${ pageBean.pageList==null}">
+                <c:if test="${ requestScope.userPage.list.size() == 0}">
                     <h1 style="color:red;">当前用户信息为空</h1>
                 </c:if>
-                <c:if test="${ pageBean.pageList!=null}">
+                <c:if test="${ requestScope.userPage.list.size() != 0}">
                     <!-- mytable用来控制宽高 -->
                     <div class="mytable">
                         <form action="" method="post">
@@ -239,18 +244,18 @@
 
                                     <!-- 表格中的数据 -->
                                     <tbody id="tableData">
-                                    <c:forEach items="${ pageBean.pageList}" var="user">
+                                    <c:forEach items="${ userPage.list}" var="user">
                                         <tr class="active">
-                                            <td>${user.uid }</td>
-                                            <td>${user.username }</td>
-                                            <td>${user.password}</td>
-                                            <td>${user.sex}</td>
-                                            <td>${user.email}</td>
-                                            <td>${user.phone}</td>
+                                            <td>${user.u_id }</td>
+                                            <td>${user.u_account }</td>
+                                            <td>${user.u_password}</td>
+                                            <td>${user.u_sex}</td>
+                                            <td>${user.u_email}</td>
+                                            <td>${user.u_tel}</td>
 
                                             <td><a href="#" data-toggle="modal" id="toUserEditPage"
                                                    class="btn btn-info btn-xs" data-target="#userEditModal"
-                                                   onclick="toUserEditPage(${user.uid });"> 修改 <span
+                                                   onclick="toUserEditPage(${user.u_id });"> 修改 <span
                                                     class="glyphicon glyphicon-edit" id="myedit"></span>
                                             </a> <!-- 修改 -->
 
@@ -259,7 +264,7 @@
 
                                                 <!-- 删除--> <a
                                                         class="btn btn-danger btn-xs" href="javascript:void(0)"
-                                                        onclick="deleteuser(${user.uid});">
+                                                        onclick="deleteuser(${user.u_id});">
                                                     删除<span class="glyphicon glyphicon-trash"></span>
                                                     <input type="hidden" id="currentPage3" name="currentPage3" value="${pageBean.currentPage }"/>
                                                 </a></td>
@@ -275,27 +280,32 @@
 
 
                         <!-- 分页功能的制作 -->
-                        <!--分页数据${ pageBean} -->
+                        <!--分页数据${ page} -->
                         <div align="center">
                             <ul class="pagger pagination pagination-lg">
-                                <li><a href="javascript:void(0)" onclick="toCurrentPage(0)">首页</a></li>
-                                <li><c:if test="${pageBean.currentPage-1>=0}">
-                                    <a href="javascript:void(0)"
-                                       onclick="toCurrentPage(${pageBean.currentPage-1})">上一页</a>
 
-                                </c:if> <c:if test="${pageBean.currentPage-1<0}">
-                                    <a href="javascript:void(0)" id="pageThing">上一页</a>
-                                </c:if></li>
-                                <li><c:if
-                                        test="${pageBean.currentPage+1<pageBean.allPage}">
-                                    <a href="javascript:void(0)"
-                                       onclick="toCurrentPage(${pageBean.currentPage+1})">下一页</a>
+                                <c:if test="${requestScope.IncomeExpensePage.hasPrev}">
+                                    <li>
+                                        <a
+                                                href="${pageContext.request.contextPath}/UserManageServlet?method=getAllUser&pageNo=1"
+                                                >首页</a></li>
+                                    <li>
+                                        <a
+                                                href="${pageContext.request.contextPath}/UserManageServlet?method=getAllUser&pageNo=${requestScope.userPage.prevPage}"
+                                                >上一页</a>
+                                    </li>
 
-                                </c:if> <c:if test="${pageBean.currentPage+1>=pageBean.allPage}">
-                                    <a href="javascript:void(0)" id="pageThing">下一页</a>
-                                </c:if></li>
-                                <li><a href="javascript:void(0)"
-                                       onclick="toCurrentPage(${pageBean.allPage-1})">尾页</a></li>
+                                </c:if>
+                                <c:if test="${requestScope.IncomeExpensePage.hasNext}">
+                                    <li>
+                                        <a href="${pageContext.request.contextPath}/UserManageServlet?method=getAllUser&pageNo=${requestScope.userPage.nextPage}"
+                                           >下一页</a>
+                                    </li>
+                                    <li><a
+                                            href="${pageContext.request.contextPath}/UserManageServlet?method=getAllUser&pageNo=${requestScope.userPage.totalPageNumber}"
+                                            >尾页</a></li>
+                                </c:if>
+
                             </ul>
                         </div>
                         <!-- 分页所在 -->
@@ -404,7 +414,7 @@
 
                                     <!-- 输入框组 -->
                                     <div class="form-group">
-                                        <label for="password">密码</label>
+                                        <label for="update_password">密码</label>
                                         <input type="password" class="form-control" placeholder="请输入密码"
                                                name="password" id="update_password" required="required">
                                     </div>

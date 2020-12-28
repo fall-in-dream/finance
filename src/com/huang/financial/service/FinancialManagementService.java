@@ -70,4 +70,12 @@ public class FinancialManagementService {
     public void alterIncomeExpense(IncomeExpense incomeExpense) {
         incomeExpenseDao.alterIncomeExpense(incomeExpense);
     }
+
+    public void deleteIncomeExpenseById(long id) {
+        incomeExpenseDao.deleteIncomeExpenseById(id);
+    }
+
+    public String getIncomeExpenseTypeName(long id) {
+        return incomeExpenseTypeDao.getIncomeExpenseTypeNameById(id);
+    }
 }
