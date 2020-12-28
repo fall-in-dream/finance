@@ -48,6 +48,9 @@
                 <hr />
                 <h3>注册</h3>
                 <!-- 访问路径     "${pageContext.request.contextPath}/user/regist.action"  -->
+                <div>
+                    <label id="msgLabel">${msg }</label>
+                </div>
                 <form
                         action="${pageContext.request.contextPath}/RegisterServlet"
                         id="myform" method="post">
@@ -60,7 +63,7 @@
                                 <span class="glyphicon glyphicon-user" id="icon"></span>
                             </div>
                             <input type="text" class="form-control" placeholder="请输入用户名"
-                                   name="username" id="username" required="required" value="${user.username }">
+                                   name="username" id="username" required="required" value="">
                         </div>
                     </div>
 
@@ -72,7 +75,7 @@
                                 <span class="glyphicon glyphicon-lock" id="icon"></span>
                             </div>
                             <input type="password" class="form-control" placeholder="请输入密码"
-                                   name="password" id="password" required="required" value="${user.password }">
+                                   name="password" id="password" required="required" value="">
                         </div>
                         <!-- 						<label id="passwordLabel"></label> -->
                     </div>
@@ -85,7 +88,7 @@
                             </div>
                             <input type="password" class="form-control"
                                    placeholder="请再次输入密码" name="repassword" id="repassword"
-                                   required="required" value="${repassword}">
+                                   required="required" value="">
                         </div>
                         <!-- 						<label id="passwordLabel"></label> -->
                     </div>
@@ -97,7 +100,7 @@
                                 <span class="glyphicon glyphicon-envelope" id="icon"></span>
                             </div>
                             <input type="email" class="form-control" placeholder="请输入邮箱"
-                                   name="email" id="email" required="required" value="${user.email }">
+                                   name="email" id="email" required="required" value="">
                         </div>
                         <!-- 						<label id="passwordLabel"></label> -->
                     </div>
@@ -107,7 +110,7 @@
                                 <span class="glyphicon glyphicon-ok-sign" id="icon"></span>
                             </div>
                             <input type="check-code" class="form-control" placeholder="验证码"
-                                   name="code" id="check-code" required="required" value="${user.email }">
+                                   name="code" id="check-code" required="required" value="">
                             <span class="input-group-addon btn-xs" id="get-code" style="cursor: pointer" onclick="sendMessage()">获取验证码</span>
                         </div>
                         <!-- 						<label id="passwordLabel"></label> -->
@@ -120,7 +123,7 @@
                                 <span class="glyphicon glyphicon-earphone" id="icon"></span>
                             </div>
                             <input type="text" class="form-control" placeholder="请输入手机号"
-                                   name="phone" id="phone" required="required" value="${user.phone }">
+                                   name="phone" id="phone" required="required" value="">
                         </div>
                         <!-- 						<label id="passwordLabel"></label> -->
                     </div>
@@ -129,31 +132,16 @@
                     <div class="form-group">
                         <label id="sexLabel">性别</label>
 
-                        <c:if test="${sex==null}">
-                            <label class="radio-inline">
-                                <input type="radio" class="sexradio" name="sex" value="男" checked="checked" >男
-                            </label>
-                            <span class="rightradio">
-									<label class="radio-inline">
-										<input type="radio" class="sexradio" name="sex" value="女">女
-									</label>
-								</span>
-                        </c:if>
+                        <label class="radio-inline">
+                            <input type="radio" class="sexradio" name="sex" value="男" checked="checked" >男
+                        </label>
+                        <span class="rightradio">
+                                  <label class="radio-inline">
+                                      <input type="radio" class="sexradio" name="sex" value="女">女
+                                  </label>
+                              </span>
 
-                        <c:if test="${sex!=null}">
-                            <label class="radio-inline">
-                                <input type="radio" class="sexradio" name="sex" value="男"
-                                <c:if test="${sex=='男'}"> checked="checked"</c:if>
-                                >男
-                            </label>
-                            <span class="rightradio">
-									<label class="radio-inline">
-										<input type="radio" class="sexradio" name="sex" value="女"
-                                        <c:if test="${sex=='女'}"> checked="checked"</c:if>
-                                        >女
-									</label>
-								</span>
-                        </c:if>
+
                     </div>
 
 
