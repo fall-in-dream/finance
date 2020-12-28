@@ -10,10 +10,20 @@ public class RegisterService {
     private UserDao userDao = new UserDaoImpl();
 
     public int register(String code, String inputCode, User user) {
-        if (code.equals(inputCode) && userDao.insert(user) > 0) {
+        if (code == null) {
+            return REQUEST_FAILED;
+        } else if (code.equals(inputCode) && userDao.insert(user) > 0) {
             return REQUEST_SUCCESS;
         } else {
             return REQUEST_FAILED;
+        }
+    }
+
+    public String checkUsername(String username) {
+        if (userDao.checkUserByName(username) == null) {
+            return "ok";
+        } else {
+            return "exit";
         }
     }
 }

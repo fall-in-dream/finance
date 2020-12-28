@@ -10,6 +10,37 @@ $(document).ready(function(){
 		var username=$("#username").val();
 		if(username==null||username==""){
 			$("#msgLabel").text("用户名不能为空");
+		} else {
+			$.ajax({
+				//请求资源路径
+				url:"RegisterServlet?method=checkUsername&username=" + $("#username").val(),
+				//规定请求的类型（GET 或 POST）
+				type:"post",
+				async:true,
+				//规定要发送到服务器的数据（json格式）
+				//发送数据到服务器时所使用的内容类型
+				contentType:"application/json;charset=utf-8",
+				dataType:"json",//返回时的数据类型json
+				//当请求成功时运行的函数
+				success:function(data){
+					//alert(data.name);
+					//返回的data是 exit 或者 notexit
+
+					if(data.status=="exit"){//用户已存在
+						$("#msgLabel").text("该用户已存在，请重新输入");
+						$("#username").val("");//清空值
+//						$("#username").focus();
+					}
+					else{
+						$("#msgLabel").text("");
+					}
+				},
+				//当请求失败时运行的函数
+				error:function(data){
+					$("#msgLabel").text("失败");
+				}
+
+			});
 		}
 	});
 	

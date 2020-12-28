@@ -1,10 +1,14 @@
 package com.huang.financial.servlet;
 
+import com.google.gson.Gson;
 import com.huang.financial.domain.User;
 import com.huang.financial.service.RegisterService;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -70,6 +74,14 @@ public class RegisterServlet extends HttpServlet{
         if (status == REQUEST_SUCCESS) {
             request.setAttribute("status", REQUEST_SUCCESS);
             request.getRequestDispatcher("login.jsp").forward(request, response);
+        } else {
+            response.setContentType("text/html; charset=UTF-8"); //转码
+            PrintWriter out = response.getWriter();
+            out.flush();
+            out.println("<script>");
+            out.println("alert('验证码错误请重新输入！');");
+            out.println("history.back();");
+            out.println("</script>");
         }
         /*// 获取session中的验证码
         System.out.println(sessionCode);
@@ -95,5 +107,18 @@ public class RegisterServlet extends HttpServlet{
         }
         //  移除session中的验证码
         request.removeAttribute("code");*/
+    }
+
+    protected void checkUsername(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String username = request.getParameter("username");
+        System.out.println(username);
+        String status = registerService.checkUsername(username);
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("status", status);
+        Gson gson = new Gson();
+        String jsonStr = gson.toJson(result);
+        response.setContentType("text/javascript");
+        response.getWriter().print(jsonStr);
     }
 }

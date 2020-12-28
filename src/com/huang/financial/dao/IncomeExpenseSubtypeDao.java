@@ -40,4 +40,6 @@ public interface IncomeExpenseSubtypeDao {
      * @return
      */
     public abstract List<IncomeExpenseSubtype> getAllIncomeExpenseSubtype();
+
+
 }

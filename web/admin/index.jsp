@@ -41,12 +41,10 @@
                 <hr />
                 <h3>管理员登录</h3>
                 <form
-                        action="${pageContext.request.contextPath}/userManage/login.action "
+                        action="${pageContext.request.contextPath}/AdminLoginServlet"
                         id="myform" method="post">
-                    <div>
-                        <label id="msgLabel">${msg }</label>
-                    </div>
                     <!-- 输入框组 -->
+                    <input type="hidden" name="method" value="login">
                     <div class="form-group">
                         <div class="input-group">
                             <div class="input-group-addon">

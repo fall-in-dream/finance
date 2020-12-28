@@ -39,4 +39,10 @@ public interface IncomeExpenseDao {
      * @param incomeExpense
      */
     public abstract void alterIncomeExpense(IncomeExpense incomeExpense);
+
+    /**
+     * 通过id删除收入和支出的记录
+     * @param id
+     */
+    public abstract void deleteIncomeExpenseById(long id);
 }

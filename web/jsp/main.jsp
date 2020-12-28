@@ -135,9 +135,13 @@
                         $("#my_szrid2").val(data.incomeExpense.ie_id);
                         //回显示在模态框中
                         $("#my_szrid").val(data.incomeExpense.ie_id);
-                        $("#my_szr_comment")
-                            .val(data.incomeExpense.ie_remark);
-                        $("#my_szr_num").val(data.incomeExpense.ie_money);
+
+                        $("#my_szr_comment").val(data.incomeExpense.ie_remark);
+                        if (data.incomeExpense.ie_money < 0) {
+                            $("#my_szr_num").val(data.incomeExpense.ie_money * -1);
+                        } else {
+                            $("#my_szr_num").val(data.incomeExpense.ie_money);
+                        }
 
                         //回显格式化之后的对象   String类型
                         //alert(data.formatDate);
@@ -184,12 +188,12 @@
         //删除收支记录信息
         function deleteshouzhiRecord(id) {
             if (confirm('确认要删除该收支记录吗?')) {
-                $.post("FinancialManagementServlet/method=", {
+                $.post("FinancialManagementServlet?method=deleteIncomeExpense", {
                     "id" : id
                 }, function(data) {
                     //回调为ok时，弹出alert框，并重新刷新页面
                     alert("删除收支记录成功！");
-                    window.location.reload();
+                    $(location).attr('href', 'FinancialManagementServlet?method=getAllIncomeExpenseByUserId')
                 });
             }
         }
@@ -266,7 +270,7 @@
                         </a></li>
                         <li role="presentation" class="divider"></li>
                         <li role="presentation"><a role="menuitem" tabindex="-1"
-                                                   href="${pageContext.request.contextPath}/user/logout.action">
+                                                   href="${pageContext.request.contextPath}/LoginServlet?method=forwardPage&page=login">
                             <span class="glyphicon glyphicon-log-out"></span>退出登录
                         </a> <input type="hidden" id="uid" name="uid"
                                     value="${sessionScope.user.u_id }"></li>
@@ -312,13 +316,13 @@
 													<span>
 														<label for="attYearMonth" style="font-size:20px;" class="hidden-xs">收支年月</label>
 														 <input type="text"  id="attYearMonth"
-                                                                name="date"  placeholder="请输入收支年月"
+                                                                name="date"  placeholder="请输入收支年月" value="${date}"
                                                                 readonly="readonly">
 													</span>
                                                 <span>
 														<label for="beizhu" style="font-size:20px;" class="hidden-xs">收支备注</label>
 														<input type="text" name="remark" id="beizhu" class="form-control hidden-xs"
-                                                               placeholder="请输入收支备注名" >
+                                                               value="${remark}" placeholder="请输入收支备注名" >
                                                 </span>
                                                 <!-- 											<div class="form-group ">col-md-4 col-xs-4 -->
                                                 <label><input type="submit" id="shouzhiSubmit" class="btn btn-primary" value="查询" ></label>
@@ -401,22 +405,22 @@
                                                 <li>
                                                     <a
                                                         href="${pageContext.request.contextPath}/FinancialManagementServlet?method=getAllIncomeExpenseByUserId&pageNo=1"
-                                                        id="pageThing">首页</a></li>
+                                                        >首页</a></li>
                                                 <li>
                                                     <a
                                                             href="${pageContext.request.contextPath}/FinancialManagementServlet?method=getAllIncomeExpenseByUserId&pageNo=${requestScope.IncomeExpensePage.prevPage}"
-                                                            id="pageThing">上一页</a>
+                                                            >上一页</a>
                                                 </li>
 
                                             </c:if>
                                             <c:if test="${requestScope.IncomeExpensePage.hasNext}">
                                                 <li>
                                                     <a href="${pageContext.request.contextPath}/FinancialManagementServlet?method=getAllIncomeExpenseByUserId&pageNo=${requestScope.IncomeExpensePage.nextPage}"
-                                                       id="pageThing">下一页</a>
+                                                       >下一页</a>
                                                 </li>
                                                 <li><a
                                                         href="${pageContext.request.contextPath}/FinancialManagementServlet?method=getAllIncomeExpenseByUserId&pageNo=${requestScope.IncomeExpensePage.totalPageNumber}"
-                                                        id="pageThing">尾页</a></li>
+                                                        >尾页</a></li>
                                             </c:if>
 
                                         </ul>

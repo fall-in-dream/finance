@@ -20,9 +20,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.sql.Date;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @WebServlet(name = "/FinancialManagementServlet", urlPatterns = "/FinancialManagementServlet")
 public class FinancialManagementServlet extends HttpServlet {
@@ -66,6 +68,8 @@ public class FinancialManagementServlet extends HttpServlet {
         Page<IncomeExpense> page = financialManagementService.getPage(criteriaIncomeExpense);
         List<IncomeExpenseSubtype> incomeSubtypes = financialManagementService.getAllIncomeSubtype();
         List<IncomeExpenseSubtype> expenseSubtypes = financialManagementService.getAllExpenseSubtype();
+        request.setAttribute("date", date);
+        request.setAttribute("remark", remark);
         request.setAttribute("incomes", incomeSubtypes);
         request.setAttribute("expenses", expenseSubtypes);
         request.setAttribute("IncomeExpensePage", page);
@@ -143,6 +147,9 @@ public class FinancialManagementServlet extends HttpServlet {
         incomeExpense.setIe_remark(remark);
         incomeExpense.setIe_date(date);
         incomeExpense.setIest_id(incomeExpenseSubtypeId);
+        if (financialManagementService.getIncomeExpenseTypeName(incomeExpenseSubtypeId).equals("支出")) {
+            money = -1 * money;
+        }
         incomeExpense.setIe_money(money);
         financialManagementService.alterIncomeExpense(incomeExpense);
         getAllIncomeExpenseByUserId(request, response);
@@ -150,6 +157,14 @@ public class FinancialManagementServlet extends HttpServlet {
 
     protected void deleteIncomeExpense(HttpServletRequest request, HttpServletResponse response) {
         long id = Long.parseLong(request.getParameter("id"));
-        /*financialManagementService.deleteIncomeExpense();*/
+        financialManagementService.deleteIncomeExpenseById(id);
+    }
+
+    protected void batchDeleteIncomeExpense(HttpServletRequest request, HttpServletResponse response) {
+        String ids = request.getParameter("id");
+        List<Long> idList = Arrays.stream(ids.split(",")).map(Long::parseLong).collect(Collectors.toList());
+        for(long id: idList) {
+            financialManagementService.deleteIncomeExpenseById(id);
+        }
     }
 }
